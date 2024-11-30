@@ -1,6 +1,8 @@
+
 <html><head><base href="simsime.onrender.com/">
     <meta charset="UTF-8">
     <title>Status da Sala Gartic</title>
+    <link rel="icon" type="image/png" href="https://gartic.com.br/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -38,6 +40,7 @@
             padding: 15px 25px;
             text-align: left;
             border-bottom: 1px solid #eee;
+            vertical-align: middle;
         }
 
         th {
@@ -53,6 +56,19 @@
             transition: background 0.3s ease;
         }
 
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .player-cell {
+            display: flex;
+            align-items: center;
+        }
+
         .status-message {
             margin: 20px;
             font-size: 1.2em;
@@ -63,20 +79,9 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .full {
-            background: #ffebee;
-            color: #d32f2f;
-        }
-
-        .available {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .empty {
-            background: #f5f5f5;
-            color: #616161;
-        }
+        .full { background: #ffebee; color: #d32f2f; }
+        .available { background: #e8f5e9; color: #2e7d32; }
+        .empty { background: #f5f5f5; color: #616161; }
 
         .error {
             color: #d32f2f;
@@ -121,12 +126,10 @@
 
     <script>
         function getSalaId() {
-            // First try getting id from URL parameter
             const urlParams = new URLSearchParams(window.location.search);
             const idFromParam = urlParams.get('idsala');
             if (idFromParam) return idFromParam;
 
-            // Then try getting id from path
             const path = window.location.pathname;
             const match = path.match(/idsala=(\d+)/);
             return match ? match[1] : null;
@@ -202,7 +205,14 @@
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>${index + 1}</td>
-                                <td>${jogador}</td>
+                                <td>
+                                    <div class="player-cell">
+                                        <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
+                                             class="avatar-img" 
+                                             alt="${jogador}'s avatar">
+                                        ${jogador}
+                                    </div>
+                                </td>
                                 <td>${salaData.pontos[index]}</td>
                             `;
                             tableBody.appendChild(row);
@@ -228,5 +238,10 @@
         }
 
         updateTable();
+        
+        // Only set interval if we have an idsala parameter
+        if (window.location.search.includes('idsala=')) {
+            setInterval(updateTable, 700);
+        }
     </script>
 </body></html>
