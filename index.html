@@ -29,7 +29,7 @@
 
         .table-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 800px;
             overflow-x: auto;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
@@ -203,8 +203,6 @@
                                 <th><i class="fas fa-hashtag"></i> Posição</th>
                                 <th><i class="fas fa-user"></i> Jogador</th>
                                 <th><i class="fas fa-star"></i> Pontos</th>
-                                <th><i class="fas fa-trophy"></i> Ranking</th>
-                                <th><i class="fas fa-chart-line"></i> Status</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -257,8 +255,6 @@
                                     </div>
                                 </td>
                                 <td>${salaData.pontos[index]}</td>
-                                <td>#${index + 1} na sala</td>
-                                <td><i class="fas fa-circle" style="color: #2ecc71;"></i> Online</td>
                             `;
                             tableBody.appendChild(row);
                         }
