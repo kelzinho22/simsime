@@ -1,0 +1,119 @@
+
+<html><head><base href="salatabela.com/">
+    <meta charset="UTF-8">
+    <title>Sala do Gartic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f0f0f0;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 25px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .status-message {
+            margin: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .full {
+            color: red;
+        }
+        .available {
+            color: green;
+        }
+        .empty {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Status da Sala</h1>
+    <table id="playerTable">
+        <thead>
+            <tr>
+                <th>Posição</th>
+                <th>Jogador</th>
+                <th>Pontos</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+    <div id="statusMessage" class="status-message"></div>
+
+    <script>
+        function updateTable() {
+            const urlParams = new URLSearchParams(window.location.pathname.split('idsala=')[1]);
+            const salaId = urlParams.toString();
+            
+            fetch(`https://gartic.com.br/info_sala.php?x=&id_sala=${salaId}`)
+                .then(response => response.text())
+                .then(data => {
+                    // Extrair o JSON da resposta (removendo os caracteres especiais no final)
+                    const jsonStr = data.replace(/⏸️⚙️$/, '');
+                    const salaData = JSON.parse(jsonStr);
+                    
+                    const tableBody = document.getElementById('tableBody');
+                    const statusMessage = document.getElementById('statusMessage');
+                    
+                    // Limpar tabela existente
+                    tableBody.innerHTML = '';
+                    
+                    // Preencher tabela
+                    salaData.jogadores.forEach((jogador, index) => {
+                        if (index < 10 || salaData.jogadores.length > 10) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td>${jogador}</td>
+                                <td>${salaData.pontos[index]}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        }
+                    });
+                    
+                    // Atualizar mensagem de status
+                    if (salaData.jogadores.length === 0) {
+                        statusMessage.textContent = "Sala vazia";
+                        statusMessage.className = "status-message empty";
+                    } else if (salaData.jogadores.length === 10) {
+                        statusMessage.textContent = "A sala está cheia";
+                        statusMessage.className = "status-message full";
+                    } else {
+                        const vagasDisponiveis = 10 - salaData.jogadores.length;
+                        statusMessage.textContent = `Há ${vagasDisponiveis} vagas disponíveis.`;
+                        statusMessage.className = "status-message available";
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar dados:', error);
+                });
+        }
+
+        // Atualizar a cada 0.7 segundos
+        setInterval(updateTable, 700);
+        
+        // Primeira atualização
+        updateTable();
+    </script>
+</body></html>
