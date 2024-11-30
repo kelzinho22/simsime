@@ -1,6 +1,7 @@
 
 <html><head><base href="simsime.onrender.com/">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Status da Sala Gartic</title>
     <link rel="icon" type="image/png" href="https://gartic.com.br/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -11,112 +12,150 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             margin: 0;
             min-height: 100vh;
             padding: 20px;
+            color: #ecf0f1;
         }
 
         h1 {
-            color: #2c3e50;
+            color: #ecf0f1;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 10px;
         }
 
         table {
             border-collapse: collapse;
-            margin: 20px;
-            background: white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background: #2c3e50;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             border-radius: 15px;
-            overflow: hidden;
-            width: 90%;
-            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
         }
 
         th, td {
-            padding: 15px 25px;
+            padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #eee;
-            vertical-align: middle;
+            border-bottom: 1px solid #34495e;
+            white-space: nowrap;
         }
 
         th {
-            background: #4CAF50;
-            color: white;
+            background: #1a2634;
+            color: #ecf0f1;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         tr:hover {
-            background: #f8f9fa;
+            background: #34495e;
             transition: background 0.3s ease;
         }
 
         .avatar-img {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             margin-right: 10px;
             vertical-align: middle;
+            object-fit: cover;
         }
 
         .player-cell {
             display: flex;
             align-items: center;
+            min-width: 150px;
         }
 
         .status-message {
             margin: 20px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: 600;
             text-align: center;
             padding: 15px 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
         }
 
-        .full { background: #ffebee; color: #d32f2f; }
-        .available { background: #e8f5e9; color: #2e7d32; }
-        .empty { background: #f5f5f5; color: #616161; }
+        .full { background: #c0392b; color: #ecf0f1; }
+        .available { background: #27ae60; color: #ecf0f1; }
+        .empty { background: #7f8c8d; color: #ecf0f1; }
 
         .error {
-            color: #d32f2f;
-            background: #ffebee;
-            padding: 30px;
+            color: #ecf0f1;
+            background: #c0392b;
+            padding: 25px;
             border-radius: 15px;
+            width: 90%;
             max-width: 600px;
-            margin: 40px auto;
+            margin: 20px auto;
             text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border: 2px solid #ffcdd2;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .help-section {
-            background: white;
-            padding: 30px;
+            background: #34495e;
+            padding: 25px;
             border-radius: 15px;
+            width: 90%;
             max-width: 600px;
             margin: 20px auto;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .help-section h2 {
-            color: #2c3e50;
+            color: #ecf0f1;
             margin-bottom: 20px;
         }
 
         .help-section p {
             line-height: 1.6;
-            color: #34495e;
+            color: #bdc3c7;
         }
 
         .emoji {
             font-size: 1.2em;
             margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .table-container {
+                padding: 5px;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+
+            .status-message {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
@@ -144,7 +183,7 @@
                 <div class="help-section">
                     <h2><i class="fas fa-question-circle emoji"></i> Como usar?</h2>
                     <p>Para visualizar os dados de uma sala, adicione o ID da sala na URL usando o formato:</p>
-                    <p style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                    <p style="background: #2c3e50; padding: 10px; border-radius: 5px;">
                         <i class="fas fa-link emoji"></i> https://simsime.onrender.com/?idsala=05
                     </p>
                     <p>Substitua o número "05" pelo ID da sala que você deseja monitorar.</p>
@@ -157,17 +196,21 @@
             const content = document.getElementById('content');
             content.innerHTML = `
                 <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
-                <table id="playerTable">
-                    <thead>
-                        <tr>
-                            <th><i class="fas fa-hashtag"></i> Posição</th>
-                            <th><i class="fas fa-user"></i> Jogador</th>
-                            <th><i class="fas fa-star"></i> Pontos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table id="playerTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Posição</th>
+                                <th><i class="fas fa-user"></i> Jogador</th>
+                                <th><i class="fas fa-star"></i> Pontos</th>
+                                <th><i class="fas fa-trophy"></i> Ranking</th>
+                                <th><i class="fas fa-chart-line"></i> Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
                 <div id="statusMessage" class="status-message"></div>
             `;
         }
@@ -214,6 +257,8 @@
                                     </div>
                                 </td>
                                 <td>${salaData.pontos[index]}</td>
+                                <td>#${index + 1} na sala</td>
+                                <td><i class="fas fa-circle" style="color: #2ecc71;"></i> Online</td>
                             `;
                             tableBody.appendChild(row);
                         }
@@ -239,7 +284,6 @@
 
         updateTable();
         
-        // Only set interval if we have an idsala parameter
         if (window.location.search.includes('idsala=')) {
             setInterval(updateTable, 700);
         }
