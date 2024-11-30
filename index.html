@@ -121,6 +121,12 @@
 
     <script>
         function getSalaId() {
+            // First try getting id from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const idFromParam = urlParams.get('idsala');
+            if (idFromParam) return idFromParam;
+
+            // Then try getting id from path
             const path = window.location.pathname;
             const match = path.match(/idsala=(\d+)/);
             return match ? match[1] : null;
@@ -136,7 +142,7 @@
                     <h2><i class="fas fa-question-circle emoji"></i> Como usar?</h2>
                     <p>Para visualizar os dados de uma sala, adicione o ID da sala na URL usando o formato:</p>
                     <p style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
-                        <i class="fas fa-link emoji"></i> https://simsime.onrender.com/idsala=05
+                        <i class="fas fa-link emoji"></i> https://simsime.onrender.com/?idsala=05
                     </p>
                     <p>Substitua o número "05" pelo ID da sala que você deseja monitorar.</p>
                     <p><i class="fas fa-info-circle emoji"></i> Importante: Esta ferramenta funciona apenas com salas oficiais e cadastradas do Gartic.</p>
@@ -167,7 +173,7 @@
             const salaId = getSalaId();
             
             if (!salaId) {
-                showError('URL inválida! Você precisa especificar o ID da sala na URL.<br>Exemplo: https://simsime.onrender.com/idsala=05');
+                showError('URL inválida! Você precisa especificar o ID da sala na URL.<br>Exemplo: https://simsime.onrender.com/?idsala=05');
                 return;
             }
 
@@ -221,7 +227,6 @@
                 });
         }
 
-        // Removed setInterval to prevent flashing
         updateTable();
     </script>
 </body></html>
