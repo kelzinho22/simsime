@@ -134,6 +134,12 @@
             margin-right: 10px;
         }
 
+        .position-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -200,8 +206,7 @@
                     <table id="playerTable">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-hashtag"></i> Posição</th>
-                                <th><i class="fas fa-user"></i> Jogador</th>
+                                <th><i class="fas fa-hashtag"></i> Jogador</th>
                                 <th><i class="fas fa-star"></i> Pontos</th>
                             </tr>
                         </thead>
@@ -245,13 +250,12 @@
                         if (index < 10 || salaData.jogadores.length > 10) {
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td>${index + 1}</td>
                                 <td>
-                                    <div class="player-cell">
+                                    <div class="position-cell">
                                         <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
                                              class="avatar-img" 
                                              alt="${jogador}'s avatar">
-                                        ${jogador}
+                                        ${index + 1}. ${jogador}
                                     </div>
                                 </td>
                                 <td>${salaData.pontos[index]}</td>
