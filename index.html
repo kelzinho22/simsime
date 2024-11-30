@@ -1,84 +1,196 @@
 <html><head><base href="simsime.onrender.com/">
     <meta charset="UTF-8">
-    <title>Sala do Gartic</title>
+    <title>Status da Sala Gartic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #f0f0f0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
         }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
         table {
             border-collapse: collapse;
             margin: 20px;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-radius: 15px;
             overflow: hidden;
+            width: 90%;
+            max-width: 800px;
         }
+
         th, td {
-            padding: 12px 25px;
+            padding: 15px 25px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #eee;
         }
+
         th {
             background: #4CAF50;
             color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
         tr:hover {
-            background: #f5f5f5;
+            background: #f8f9fa;
+            transition: background 0.3s ease;
         }
+
         .status-message {
             margin: 20px;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
         .full {
-            color: red;
+            background: #ffebee;
+            color: #d32f2f;
         }
+
         .available {
-            color: green;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
+
         .empty {
-            color: #666;
+            background: #f5f5f5;
+            color: #616161;
+        }
+
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 40px auto;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 2px solid #ffcdd2;
+        }
+
+        .help-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .help-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .help-section p {
+            line-height: 1.6;
+            color: #34495e;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Status da Sala</h1>
-    <table id="playerTable">
-        <thead>
-            <tr>
-                <th>Posição</th>
-                <th>Jogador</th>
-                <th>Pontos</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-        </tbody>
-    </table>
-    <div id="statusMessage" class="status-message"></div>
+    <div id="content">
+    </div>
 
     <script>
+        function getSalaId() {
+            const path = window.location.pathname;
+            const match = path.match(/idsala=(\d+)/);
+            return match ? match[1] : null;
+        }
+
+        function showError(message) {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-circle emoji"></i> ${message}
+                </div>
+                <div class="help-section">
+                    <h2><i class="fas fa-question-circle emoji"></i> Como usar?</h2>
+                    <p>Para visualizar os dados de uma sala, adicione o ID da sala na URL usando o formato:</p>
+                    <p style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                        <i class="fas fa-link emoji"></i> https://simsime.onrender.com/idsala=05
+                    </p>
+                    <p>Substitua o número "05" pelo ID da sala que você deseja monitorar.</p>
+                    <p><i class="fas fa-info-circle emoji"></i> Importante: Esta ferramenta funciona apenas com salas oficiais e cadastradas do Gartic.</p>
+                </div>
+            `;
+        }
+
+        function showTable() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
+                <table id="playerTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> Posição</th>
+                            <th><i class="fas fa-user"></i> Jogador</th>
+                            <th><i class="fas fa-star"></i> Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+                <div id="statusMessage" class="status-message"></div>
+            `;
+        }
+
         function updateTable() {
-            const urlParams = new URLSearchParams(window.location.pathname.split('idsala=')[1]);
-            const salaId = urlParams.toString();
+            const salaId = getSalaId();
             
+            if (!salaId) {
+                showError('URL inválida! Você precisa especificar o ID da sala na URL.<br>Exemplo: https://simsime.onrender.com/idsala=05');
+                return;
+            }
+
             fetch(`https://gartic.com.br/info_sala.php?x=&id_sala=${salaId}`)
                 .then(response => response.text())
                 .then(data => {
-                    // Extrair o JSON da resposta (removendo os caracteres especiais no final)
                     const jsonStr = data.replace(/⏸️⚙️$/, '');
                     const salaData = JSON.parse(jsonStr);
+
+                    if (salaData.nao_cadastrados === "1" || salaData.nao_cadastrados === "2") {
+                        showError('Esta ferramenta só funciona com salas oficiais e cadastradas do Gartic.');
+                        return;
+                    }
                     
+                    if (!document.getElementById('playerTable')) {
+                        showTable();
+                    }
+
                     const tableBody = document.getElementById('tableBody');
                     const statusMessage = document.getElementById('statusMessage');
                     
-                    // Limpar tabela existente
                     tableBody.innerHTML = '';
                     
-                    // Preencher tabela
                     salaData.jogadores.forEach((jogador, index) => {
                         if (index < 10 || salaData.jogadores.length > 10) {
                             const row = document.createElement('tr');
@@ -91,28 +203,25 @@
                         }
                     });
                     
-                    // Atualizar mensagem de status
                     if (salaData.jogadores.length === 0) {
-                        statusMessage.textContent = "Sala vazia";
+                        statusMessage.innerHTML = "<i class='fas fa-door-open'></i> Sala vazia";
                         statusMessage.className = "status-message empty";
                     } else if (salaData.jogadores.length === 10) {
-                        statusMessage.textContent = "A sala está cheia";
+                        statusMessage.innerHTML = "<i class='fas fa-users-slash'></i> A sala está cheia";
                         statusMessage.className = "status-message full";
                     } else {
                         const vagasDisponiveis = 10 - salaData.jogadores.length;
-                        statusMessage.textContent = `Há ${vagasDisponiveis} vagas disponíveis.`;
+                        statusMessage.innerHTML = `<i class='fas fa-door-open'></i> Há ${vagasDisponiveis} vagas disponíveis`;
                         statusMessage.className = "status-message available";
                     }
                 })
                 .catch(error => {
                     console.error('Erro ao atualizar dados:', error);
+                    showError('Erro ao carregar dados da sala. Verifique se o ID da sala é válido.');
                 });
         }
 
-        // Atualizar a cada 0.7 segundos
-        setInterval(updateTable, 700);
-        
-        // Primeira atualização
+        // Removed setInterval to prevent flashing
         updateTable();
     </script>
 </body></html>
