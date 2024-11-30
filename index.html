@@ -82,7 +82,7 @@
         }
 
         .status-message {
-            margin: 20px;
+            margin: 20px auto;
             font-size: 1.1em;
             font-weight: 600;
             text-align: center;
@@ -90,7 +90,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 800px;
         }
 
         .full { background: #c0392b; color: #ecf0f1; }
@@ -206,7 +206,8 @@
                     <table id="playerTable">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-hashtag"></i> Jogador</th>
+                                <th><i class="fas fa-hashtag"></i> Posição</th>
+                                <th><i class="fas fa-user"></i> Jogador</th>
                                 <th><i class="fas fa-star"></i> Pontos</th>
                             </tr>
                         </thead>
@@ -250,12 +251,13 @@
                         if (index < 10 || salaData.jogadores.length > 10) {
                             const row = document.createElement('tr');
                             row.innerHTML = `
+                                <td class="position-cell">${index + 1}</td>
                                 <td>
-                                    <div class="position-cell">
+                                    <div class="player-cell">
                                         <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
                                              class="avatar-img" 
                                              alt="${jogador}'s avatar">
-                                        ${index + 1}. ${jogador}
+                                        ${jogador}
                                     </div>
                                 </td>
                                 <td>${salaData.pontos[index]}</td>
