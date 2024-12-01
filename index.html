@@ -258,14 +258,13 @@
             color: #ecf0f1;
             border: none;
             border-radius: 5px;
-            padding: 10px 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0 auto 20px;
             font-family: 'Poppins', sans-serif;
             transition: background 0.3s ease;
+            width: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .save-button:hover {
@@ -329,11 +328,12 @@
         function showTable() {
             const content = document.getElementById('content');
             content.innerHTML = `
-                <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
-                <button onclick="captureAndSaveImage()" class="save-button">
-                    <i class="fas fa-save"></i>
-                    Salvar como Imagem
-                </button>
+                <h1>
+                    <i class="fas fa-gamepad emoji"></i> Status da Sala
+                    <button onclick="captureAndSaveImage()" class="save-button" style="display: inline-block; padding: 5px 10px; margin-left: 10px; vertical-align: middle;">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </h1>
                 <div id="captureArea">
                     <h2 id="roomName">
                         <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
@@ -366,9 +366,13 @@
                 allowTaint: true,
                 useCORS: true,
                 onclone: function(clonedDoc) {
-                    const icons = clonedDoc.querySelectorAll('.fas');
-                    icons.forEach(icon => {
-                        icon.style.fontFamily = 'FontAwesome';
+                    const fontAwesomeLink = document.createElement('link');
+                    fontAwesomeLink.rel = 'stylesheet';
+                    fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+                    clonedDoc.head.appendChild(fontAwesomeLink);
+                    
+                    return new Promise((resolve) => {
+                        fontAwesomeLink.onload = resolve;
                     });
                 }
             }).then(canvas => {
@@ -429,7 +433,7 @@
                                         ${jogador}
                                     </div>
                                 </td>
-                                <td>${salaData.pontos[index]}</td>
+                                <td>${salaData.pontos[index]} pontos</td>
                             `;
                             tableBody.appendChild(row);
                         }
