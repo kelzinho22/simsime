@@ -27,6 +27,20 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
+        #roomName {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: rgba(26, 38, 52, 0.7);
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 0 auto 20px;
+        }
+
+        #roomName i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
         .table-container {
             width: 100%;
             max-width: 800px;
@@ -154,6 +168,11 @@
                 font-size: 1.5em;
             }
 
+            #roomName {
+                font-size: 1.2em;
+                padding: 8px 15px;
+            }
+
             .table-container {
                 padding: 5px;
             }
@@ -207,6 +226,9 @@
             const content = document.getElementById('content');
             content.innerHTML = `
                 <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
+                <h2 id="roomName" style="text-align: center; color: #ecf0f1; margin-bottom: 20px; font-size: 1.5em;">
+                    <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
+                </h2>
                 <div class="table-container">
                     <table id="playerTable">
                         <thead>
@@ -245,6 +267,12 @@
                     
                     if (!document.getElementById('playerTable')) {
                         showTable();
+                    }
+
+                    // Update room name
+                    const roomNameText = document.getElementById('roomNameText');
+                    if (roomNameText) {
+                        roomNameText.textContent = salaData.nome;
                     }
 
                     const tableBody = document.getElementById('tableBody');
