@@ -54,7 +54,6 @@
             overflow-x: auto;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
             padding: 10px;
         }
 
@@ -62,7 +61,6 @@
             border-collapse: collapse;
             background: #2c3e50;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border-radius: 15px;
             width: 100%;
             margin: 0 auto;
         }
@@ -274,10 +272,18 @@
         #captureArea {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 0;
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
+        }
+
+        #captureArea .table-container {
+            border-radius: 0;
+        }
+
+        #captureArea table {
+            border-radius: 0;
         }
     </style>
 </head>
@@ -359,27 +365,45 @@
         function captureAndSaveImage() {
             const captureArea = document.getElementById('captureArea');
             
-            html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2,
-                logging: false,
-                allowTaint: true,
-                useCORS: true,
-                onclone: function(clonedDoc) {
-                    const fontAwesomeLink = document.createElement('link');
-                    fontAwesomeLink.rel = 'stylesheet';
-                    fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-                    clonedDoc.head.appendChild(fontAwesomeLink);
-                    
-                    return new Promise((resolve) => {
-                        setTimeout(resolve, 500); // Give time for icons to load
-                    });
-                }
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            // First, load all avatars
+            const avatars = captureArea.querySelectorAll('.avatar-img');
+            const avatarPromises = Array.from(avatars).map(avatar => {
+                return new Promise((resolve) => {
+                    if (avatar.complete) {
+                        resolve();
+                    } else {
+                        avatar.onload = () => resolve();
+                        avatar.onerror = () => resolve();
+                    }
+                });
+            });
+
+            // Wait for all avatars to load
+            Promise.all(avatarPromises).then(() => {
+                html2canvas(captureArea, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true,
+                    imageTimeout: 0,
+                    onclone: function(clonedDoc) {
+                        const fontAwesomeLink = document.createElement('link');
+                        fontAwesomeLink.rel = 'stylesheet';
+                        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+                        clonedDoc.head.appendChild(fontAwesomeLink);
+
+                        return new Promise((resolve) => {
+                            setTimeout(resolve, 1000); // Increase timeout to ensure everything loads
+                        });
+                    },
+                    removeContainer: false
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
             });
         }
 
@@ -418,14 +442,16 @@
                     
                     salaData.jogadores.forEach((jogador, index) => {
                         if (index < 10 || salaData.jogadores.length > 10) {
+                            const avatarUrl = `https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=${Date.now()}`; // Add timestamp to prevent caching
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>
                                     <div class="position-cell" style="cursor: pointer" onclick="showPlayerProfile('${jogador}')">
                                         <span class="position-number">${index + 1}</span>
-                                        <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
+                                        <img src="${avatarUrl}" 
                                              class="avatar-img" 
-                                             alt="${jogador}'s avatar">
+                                             alt="${jogador}'s avatar"
+                                             crossorigin="anonymous">
                                     </div>
                                 </td>
                                 <td>
