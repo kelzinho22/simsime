@@ -272,18 +272,17 @@
         #captureArea {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             padding: 20px;
-            border-radius: 0; /* Remove border radius */
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
         }
 
         #captureArea .table-container {
-            border-radius: 0; /* Remove border radius */
+            margin: 0 auto;
         }
 
         #captureArea table {
-            border-radius: 0; /* Remove border radius */
+            width: 100%;
         }
     </style>
 </head>
@@ -364,47 +363,17 @@
 
         function captureAndSaveImage() {
             const captureArea = document.getElementById('captureArea');
-            
-            // First, preload all avatars before capture
-            const avatars = captureArea.querySelectorAll('.avatar-img');
-            const avatarPromises = Array.from(avatars).map(avatar => {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.crossOrigin = "anonymous";
-                    img.onload = () => {
-                        // Update the original avatar with the fully loaded one
-                        avatar.src = img.src;
-                        resolve();
-                    };
-                    img.onerror = () => resolve(); // Handle errors gracefully
-                    img.src = avatar.src;
-                });
-            });
-
-            // Wait for all avatars to fully load before capturing
-            Promise.all(avatarPromises).then(() => {
-                // Add slight delay to ensure everything is rendered
-                setTimeout(() => {
-                    html2canvas(captureArea, {
-                        backgroundColor: null,
-                        scale: 2,
-                        logging: false,
-                        allowTaint: false,
-                        useCORS: true,
-                        imageTimeout: 5000,
-                        onclone: function(clonedDoc) {
-                            const fontAwesomeLink = document.createElement('link');
-                            fontAwesomeLink.rel = 'stylesheet';
-                            fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-                            clonedDoc.head.appendChild(fontAwesomeLink);
-                        }
-                    }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
-                    });
-                }, 500);
+            html2canvas(captureArea, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                allowTaint: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
             });
         }
 
