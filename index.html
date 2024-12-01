@@ -54,6 +54,7 @@
             overflow-x: auto;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
             padding: 10px;
         }
 
@@ -61,6 +62,7 @@
             border-collapse: collapse;
             background: #2c3e50;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-radius: 15px;
             width: 100%;
             margin: 0 auto;
         }
@@ -256,13 +258,14 @@
             color: #ecf0f1;
             border: none;
             border-radius: 5px;
+            padding: 10px 20px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
             font-family: 'Poppins', sans-serif;
             transition: background 0.3s ease;
-            width: auto;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .save-button:hover {
@@ -272,17 +275,7 @@
         #captureArea {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             padding: 20px;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        #captureArea .table-container {
-            margin: 0 auto;
-        }
-
-        #captureArea table {
-            width: 100%;
+            border-radius: 15px;
         }
     </style>
 </head>
@@ -333,13 +326,8 @@
         function showTable() {
             const content = document.getElementById('content');
             content.innerHTML = `
-                <h1>
-                    <i class="fas fa-gamepad emoji"></i> Status da Sala
-                    <button onclick="captureAndSaveImage()" class="save-button" style="display: inline-block; padding: 5px 10px; margin-left: 10px; vertical-align: middle;">
-                        <i class="fas fa-save"></i>
-                    </button>
-                </h1>
                 <div id="captureArea">
+                    <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
                     <h2 id="roomName">
                         <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
                     </h2>
@@ -358,18 +346,22 @@
                     </div>
                     <div id="statusMessage" class="status-message"></div>
                 </div>
+                <button onclick="captureAndSaveImage()" class="save-button">
+                    <i class="fas fa-download"></i>
+                    Salvar como Imagem
+                </button>
             `;
         }
 
         function captureAndSaveImage() {
             const captureArea = document.getElementById('captureArea');
+            
             html2canvas(captureArea, {
                 backgroundColor: null,
-                scale: 2,
-                logging: false,
-                allowTaint: false,
-                useCORS: true
+                scale: 2, // Higher quality
+                logging: false
             }).then(canvas => {
+                // Create download link
                 const link = document.createElement('a');
                 link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -400,6 +392,7 @@
                         showTable();
                     }
 
+                    // Update room name
                     const roomNameText = document.getElementById('roomNameText');
                     if (roomNameText) {
                         roomNameText.textContent = salaData.nome;
@@ -412,16 +405,14 @@
                     
                     salaData.jogadores.forEach((jogador, index) => {
                         if (index < 10 || salaData.jogadores.length > 10) {
-                            const avatarUrl = `https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1`;
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>
                                     <div class="position-cell" style="cursor: pointer" onclick="showPlayerProfile('${jogador}')">
                                         <span class="position-number">${index + 1}</span>
-                                        <img src="${avatarUrl}" 
+                                        <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
                                              class="avatar-img" 
-                                             alt="${jogador}'s avatar"
-                                             crossorigin="anonymous">
+                                             alt="${jogador}'s avatar">
                                     </div>
                                 </td>
                                 <td>
@@ -429,7 +420,7 @@
                                         ${jogador}
                                     </div>
                                 </td>
-                                <td>${salaData.pontos[index]} pontos</td>
+                                <td>${salaData.pontos[index]}</td>
                             `;
                             tableBody.appendChild(row);
                         }
@@ -461,6 +452,7 @@
                 const response = await fetch(`https://gartic.pics/r/profile?&login=${encodeURIComponent(playerName)}`);
                 const data = await response.json();
                 
+                // Check if frase is empty or just contains whitespace
                 const hasPhrase = data.frase && data.frase.trim() !== "" && data.frase !== "\r\n";
                 
                 profileDiv.innerHTML = `
@@ -508,7 +500,10 @@
             }
         });
 
-        updateTable(); // Initial call
-        setInterval(updateTable, 700); // Update every 0.7 seconds
+        updateTable();
+        
+        if (window.location.search.includes('idsala=')) {
+            setInterval(updateTable, 700);
+        }
     </script>
 </body></html>
