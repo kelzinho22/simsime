@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="https://gartic.com.br/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -251,6 +252,31 @@
             color: #ecf0f1;
             margin: 10px 0;
         }
+
+        .save-button {
+            background: #3498db;
+            color: #ecf0f1;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.3s ease;
+        }
+
+        .save-button:hover {
+            background: #2980b9;
+        }
+
+        #captureArea {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 20px;
+            border-radius: 15px;
+        }
     </style>
 </head>
 <body>
@@ -300,25 +326,47 @@
         function showTable() {
             const content = document.getElementById('content');
             content.innerHTML = `
-                <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
-                <h2 id="roomName">
-                    <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
-                </h2>
-                <div class="table-container">
-                    <table id="playerTable">
-                        <thead>
-                            <tr>
-                                <th><i class="fas fa-hashtag"></i> Posição</th>
-                                <th><i class="fas fa-user"></i> Jogador</th>
-                                <th><i class="fas fa-star"></i> Pontos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                        </tbody>
-                    </table>
+                <div id="captureArea">
+                    <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
+                    <h2 id="roomName">
+                        <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
+                    </h2>
+                    <div class="table-container">
+                        <table id="playerTable">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> Posição</th>
+                                    <th><i class="fas fa-user"></i> Jogador</th>
+                                    <th><i class="fas fa-star"></i> Pontos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="statusMessage" class="status-message"></div>
                 </div>
-                <div id="statusMessage" class="status-message"></div>
+                <button onclick="captureAndSaveImage()" class="save-button">
+                    <i class="fas fa-download"></i>
+                    Salvar como Imagem
+                </button>
             `;
+        }
+
+        function captureAndSaveImage() {
+            const captureArea = document.getElementById('captureArea');
+            
+            html2canvas(captureArea, {
+                backgroundColor: null,
+                scale: 2, // Higher quality
+                logging: false
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
         function updateTable() {
