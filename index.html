@@ -138,6 +138,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 100px;
+        }
+
+        .position-number {
+            min-width: 20px;
         }
 
         @media (max-width: 768px) {
@@ -251,12 +256,16 @@
                         if (index < 10 || salaData.jogadores.length > 10) {
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td class="position-cell">${index + 1}</td>
                                 <td>
-                                    <div class="player-cell">
+                                    <div class="position-cell">
+                                        <span class="position-number">${index + 1}</span>
                                         <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
                                              class="avatar-img" 
                                              alt="${jogador}'s avatar">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="player-cell">
                                         ${jogador}
                                     </div>
                                 </td>
