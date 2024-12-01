@@ -419,12 +419,18 @@
                     ` : ''}
                     <div class="profile-stats">
                         <div class="stat-item">
-                            <div class="stat-value">${data.pontos.toLocaleString()}</div>
-                            <div class="stat-label">Pontos</div>
+                            <div class="stat-value">
+                                <i class="fas fa-trophy" style="color: #f1c40f; margin-right: 5px;"></i>
+                                ${data.vitorias.toLocaleString()}
+                            </div>
+                            <div class="stat-label">Vitórias</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value">${data.vitorias.toLocaleString()}</div>
-                            <div class="stat-label">Vitórias</div>
+                            <div class="stat-value">
+                                <i class="fas fa-star" style="color: #f1c40f; margin-right: 5px;"></i>
+                                ${data.pontos.toLocaleString()}
+                            </div>
+                            <div class="stat-label">Pontos</div>
                         </div>
                     </div>
                 `;
