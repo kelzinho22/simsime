@@ -333,48 +333,25 @@
         function showTable() {
             const content = document.getElementById('content');
             content.innerHTML = `
-                <h1>
-                    <i class="fas fa-gamepad emoji"></i> Status da Sala
-                    <button onclick="captureAndSaveImage()" class="save-button" style="display: inline-block; padding: 5px 10px; margin-left: 10px; vertical-align: middle;">
-                        <i class="fas fa-save"></i>
-                    </button>
-                </h1>
-                <div id="captureArea">
-                    <h2 id="roomName">
-                        <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
-                    </h2>
-                    <div class="table-container">
-                        <table id="playerTable">
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-hashtag"></i> Posição</th>
-                                    <th><i class="fas fa-user"></i> Jogador</th>
-                                    <th><i class="fas fa-star"></i> Pontos</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="statusMessage" class="status-message"></div>
+                <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
+                <h2 id="roomName">
+                    <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
+                </h2>
+                <div class="table-container">
+                    <table id="playerTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Posição</th>
+                                <th><i class="fas fa-user"></i> Jogador</th>
+                                <th><i class="fas fa-star"></i> Pontos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
                 </div>
+                <div id="statusMessage" class="status-message"></div>
             `;
-        }
-
-        function captureAndSaveImage() {
-            const captureArea = document.getElementById('captureArea');
-            html2canvas(captureArea, {
-                backgroundColor: null,
-                scale: 2,
-                logging: false,
-                allowTaint: false,
-                useCORS: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
         }
 
         function updateTable() {
@@ -429,7 +406,7 @@
                                         ${jogador}
                                     </div>
                                 </td>
-                                <td>${salaData.pontos[index]} pontos</td>
+                                <td>${salaData.pontos[index]}</td>
                             `;
                             tableBody.appendChild(row);
                         }
@@ -508,7 +485,7 @@
             }
         });
 
-        updateTable(); // Initial call
-        setInterval(updateTable, 700); // Update every 0.7 seconds
+        updateTable();
+        setInterval(updateTable, 700);
     </script>
 </body></html>
