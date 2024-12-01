@@ -372,7 +372,7 @@
                     clonedDoc.head.appendChild(fontAwesomeLink);
                     
                     return new Promise((resolve) => {
-                        fontAwesomeLink.onload = resolve;
+                        setTimeout(resolve, 500); // Give time for icons to load
                     });
                 }
             }).then(canvas => {
