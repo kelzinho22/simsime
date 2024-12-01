@@ -365,45 +365,46 @@
         function captureAndSaveImage() {
             const captureArea = document.getElementById('captureArea');
             
-            // First, load all avatars
+            // First, preload all avatars before capture
             const avatars = captureArea.querySelectorAll('.avatar-img');
             const avatarPromises = Array.from(avatars).map(avatar => {
                 return new Promise((resolve) => {
-                    if (avatar.complete) {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        // Update the original avatar with the fully loaded one
+                        avatar.src = img.src;
                         resolve();
-                    } else {
-                        avatar.onload = () => resolve();
-                        avatar.onerror = () => resolve();
-                    }
+                    };
+                    img.onerror = () => resolve(); // Handle errors gracefully
+                    img.src = avatar.src;
                 });
             });
 
-            // Wait for all avatars to load
+            // Wait for all avatars to fully load before capturing
             Promise.all(avatarPromises).then(() => {
-                html2canvas(captureArea, {
-                    backgroundColor: null,
-                    scale: 2,
-                    logging: false,
-                    allowTaint: true,
-                    useCORS: true,
-                    imageTimeout: 0,
-                    onclone: function(clonedDoc) {
-                        const fontAwesomeLink = document.createElement('link');
-                        fontAwesomeLink.rel = 'stylesheet';
-                        fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
-                        clonedDoc.head.appendChild(fontAwesomeLink);
-
-                        return new Promise((resolve) => {
-                            setTimeout(resolve, 1000); // Increase timeout to ensure everything loads
-                        });
-                    },
-                    removeContainer: false
-                }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
+                // Add slight delay to ensure everything is rendered
+                setTimeout(() => {
+                    html2canvas(captureArea, {
+                        backgroundColor: null,
+                        scale: 2,
+                        logging: false,
+                        allowTaint: false,
+                        useCORS: true,
+                        imageTimeout: 5000,
+                        onclone: function(clonedDoc) {
+                            const fontAwesomeLink = document.createElement('link');
+                            fontAwesomeLink.rel = 'stylesheet';
+                            fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+                            clonedDoc.head.appendChild(fontAwesomeLink);
+                        }
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `sala-gartic-${getSalaId()}-${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    });
+                }, 500);
             });
         }
 
