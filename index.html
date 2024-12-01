@@ -34,6 +34,12 @@
             border-radius: 10px;
             display: inline-block;
             margin: 0 auto 20px;
+            text-align: center;
+            color: #ecf0f1;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            width: 100%;
+            max-width: 800px;
         }
 
         #roomName i {
@@ -226,7 +232,7 @@
             const content = document.getElementById('content');
             content.innerHTML = `
                 <h1><i class="fas fa-gamepad emoji"></i> Status da Sala</h1>
-                <h2 id="roomName" style="text-align: center; color: #ecf0f1; margin-bottom: 20px; font-size: 1.5em;">
+                <h2 id="roomName">
                     <i class="fas fa-door-open"></i> <span id="roomNameText"></span>
                 </h2>
                 <div class="table-container">
