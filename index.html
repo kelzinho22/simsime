@@ -193,10 +193,79 @@
                 padding: 10px 20px;
             }
         }
+
+        .speech-bubble {
+            position: relative;
+            background: #34495e;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ecf0f1;
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 15px 15px 15px;
+            border-style: solid;
+            border-color: #34495e transparent;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: #34495e;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            color: #bdc3c7;
+            font-size: 0.9em;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #3498db;
+            margin: 10px auto;
+        }
+
+        .profile-name {
+            font-size: 1.5em;
+            color: #ecf0f1;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div id="content">
+    </div>
+
+    <div id="playerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+        <div style="background: #2c3e50; padding: 20px; border-radius: 15px; position: relative; max-width: 400px; width: 90%; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+            <button onclick="closeModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; color: #ecf0f1; cursor: pointer; font-size: 20px;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="playerProfile" style="text-align: center;">
+                <!-- Profile content will be inserted here -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -291,7 +360,7 @@
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>
-                                    <div class="position-cell">
+                                    <div class="position-cell" style="cursor: pointer" onclick="showPlayerProfile('${jogador}')">
                                         <span class="position-number">${index + 1}</span>
                                         <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(jogador)}&app=1&rand=c4747_18.png" 
                                              class="avatar-img" 
@@ -299,7 +368,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="player-cell">
+                                    <div class="player-cell" style="cursor: pointer" onclick="showPlayerProfile('${jogador}')">
                                         ${jogador}
                                     </div>
                                 </td>
@@ -326,6 +395,51 @@
                     showError('Erro ao carregar dados da sala. Verifique se o ID da sala é válido.');
                 });
         }
+
+        async function showPlayerProfile(playerName) {
+            const modal = document.getElementById('playerModal');
+            const profileDiv = document.getElementById('playerProfile');
+            
+            try {
+                const response = await fetch(`https://gartic.pics/r/profile?&login=${encodeURIComponent(playerName)}`);
+                const data = await response.json();
+                
+                profileDiv.innerHTML = `
+                    <img src="https://gartic.com.br/avatar.php?nick=${encodeURIComponent(playerName)}&app=1&rand=c4747_18.png" 
+                         class="profile-avatar" 
+                         alt="${playerName}'s avatar">
+                    <div class="profile-name">${playerName}</div>
+                    <div class="speech-bubble">
+                        ${data.frase || "Sem frase"}
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${data.pontos.toLocaleString()}</div>
+                            <div class="stat-label">Pontos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${data.vitorias.toLocaleString()}</div>
+                            <div class="stat-label">Vitórias</div>
+                        </div>
+                    </div>
+                `;
+                
+                modal.style.display = 'flex';
+            } catch (error) {
+                console.error('Error fetching player profile:', error);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('playerModal').style.display = 'none';
+        }
+
+        document.addEventListener('click', (event) => {
+            const modal = document.getElementById('playerModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
 
         updateTable();
         
